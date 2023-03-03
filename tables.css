@@ -1,6 +1,6 @@
 /* Table wrapper */
 
-.table-wrapper {
+.coursesTable-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,7 +9,7 @@
 
 /* Table */
 
-table {
+.coursesTable {
     width: 100%
 }
 
@@ -33,10 +33,6 @@ thead tr {
 
 th {
     text-align: center;
-}
-
-th:first-child {
-    width: 60px;
 }
 
 /* Rows */
