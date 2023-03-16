@@ -133,13 +133,35 @@ main {
     font-weight: 600;
 }
 
+.alert {
+    display: none;
+    margin-top: 20px;
+    height: 50px;
+    width: 100%;
+    border-radius: 5px;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.success {
+    color: #3cb800;
+    background-color: #e6ffd9;
+    border: 1px solid #3cb800;
+}
+
+.fail {
+    color: #ff6671;
+    background-color: #ffd9dc;
+    border: 1px solid #ff6671;
+}
+
 /* Form */
 
 .form {
     margin-top: 20px;
     display: flex;
-    flex-direction: column;
-    width: 300px;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .form input[type="text"],

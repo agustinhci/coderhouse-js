@@ -10,41 +10,36 @@ class Registration {
 
 let registration = new Registration(2023, 2000)
 
-// Tracking previous courses created
+// Courses (full list)
 
 let courses = []
-
-// Storing permanent data
-
-const types = ['grammar', 'conversation', 'other']
-const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
-const modalities = ['face-to-face', 'online', 'blended', 'hybrid']
-const ageGroups = ['kids', 'teenagers', 'adults', 'third-age']
 
 // Students (full list)
 
 let students = []
 
+// Current date
+let date = new Date()
+        let current_date = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear()
+        let current_time = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+        let current_date_time = current_date + ' | '+ current_time
+
 // Course constructor
 
 class Course {
-    constructor (name, type, level, modality, ageGroupTarget, quantityOfClasses, groups, fee, instructor) {
-        
+    constructor (name, classes, fee, instructor) {
+                
         // Course information
-        this.currentYear = new Date().getFullYear()
-        this.id = `${name}-${this.currentYear.toString().slice(2,4)}-${Math.floor(Math.random()*90000) + 10000}`
+        this.id = `${name}-${Math.floor(Math.random()*90000) + 10000}`
         this.name = name
-        this.type = type
-        this.level = level
-        this.modality = modality
-        this.ageGroupTarget = ageGroupTarget
-        this.quantityOfClasses = quantityOfClasses
-        this.groups = groups
+        this.classes = classes
         this.fee = fee
         this.instructor = instructor
+        this.registrationRequired = true
 
         // Course activity information
         this.students = []
+        this.deserters = []
         this.attendance = {}
         this.payments = {}
     }
@@ -64,6 +59,16 @@ class Course {
     // Adds student to the course by e-mail
     addStudent(studentEmail) {
         this.students.push(studentEmail);
+    }
+
+    removeStudent(studentEmail) {
+        for (let student of this.students) {
+            if (studentEmail === student.email) {
+                this.students.splice(this.students.indexOf(student), 1)
+                this.deserters.push(student)
+                break
+            }
+        }
     }
 
     // Marks attendance to an student e-mail (used as identifier) and corresponding date
@@ -98,118 +103,148 @@ class Student {
         this.finishedCourses = [] // Successful   
     }
 
-    enroll(course) {
-        this.currentCourses.push(course)
+    enroll(course_id) {
+        if (this.registrationIsPaid) {
+            this.currentCourses.push(course_id)
+        } else {
+            alert('Primero debe registrar pago de la inscripción.')
+        }
     }
 
-    abandon(course) {
-        let courseAbandoned = this.currentCourses.pop() // Leaves last course enrolled
-        this.unfinishedCourses.push(courseAbandoned)
+    abandon(course_id) {
+        for (let course of this.currentCourses) {
+            if (course_id === course.id) {
+                this.currentCourses.splice(this.currentCourses.indexOf(course_id), 1)
+                this.unfinishedCourses.push(course)
+                break;
+            }
+        }
     }
 
-    finish(course) {
-        let courseFinished = this.currentCourses.pop() // Completed last course enrolled
-        this.finishedCourses.push(courseFinished)
+    finish(course_id) {
+        for (let course of this.currentCourses) {
+            if (course_id === course.id) {
+                this.currentCourses.splice(this.currentCourses.indexOf(course_id), 1)
+                this.finishedCourses.push(course)
+                break
+            }
+        }
     }
 
     payRegistration() {
         this.registrationIsPaid = true
-        this.payments.push(registration.price)
+        let amount = registration.price
+        let payment_id = `payment-reg-${this.email}-${Math.floor(Math.random()*90000) + 10000}`
+        this.payments.push({payment_id, amount, current_date_time})
     }
 
-    payFee(amount) {
-        this.payments.push(amount)
+    payFee(course_id, amount) {
+        let payment_id = `payment-fee-${this.email}-${Math.floor(Math.random()*90000) + 10000}`
+        this.payments.push({payment_id, course_id, amount, current_date_time})
     }
 
-    refund(amount) {
-        let refund = this.payments.pop()
-        this.refunds.push(refund)
+    refund(payment_id) {
+        for (let payment of this.payments) {
+            if (payment_id === payment.id) {
+                this.payments.splice(this.payments.indexOf(payment_id), 1)
+                this.refunds.push(payment)
+                break;
+            }
+        }
+        
     }
 
 }
+
+// Updating the 'courses' array with previous information provided in local storage.
+function updateCourses () {
+    let stringifiedCourses = localStorage.getItem('courses') // Gets the DOM object
+    let parsedCourses = JSON.parse(stringifiedCourses) // Parses the string to object
+    
+    // Pushes each object to the courses array, for them to be separated by comas (,)
+    if (parsedCourses !== null) {
+        for (let course of parsedCourses) {
+            courses.push(course)
+        }
+    }
+}
+
+updateCourses()
+updateTable()
 
 // Creating a course from HTML form
 
+// Gets the form
 let coursesCreator = document.getElementById("courseCreator")
+let success = document.getElementById("alertSuccess")
+let fail = document.getElementById("alertFail")
 
+// Listens the 'submit' event
 coursesCreator.addEventListener('submit', function(event) {
-    event.preventDefault()
     
-    const name = document.getElementById('courseName').value;
-    const type = document.getElementById('courseType').value;
-    const level = document.getElementById('courseLevel').value;
-    const modality = document.getElementById('courseModality').value;
-    const target = document.getElementById('courseTarget').value;
-    const quantityOfClasses = document.getElementById('courseQuantityOfClasses').value;
-    const groups = document.getElementById('courseGroups').value;
-    const price = document.getElementById('coursePrice').value;
-    const instructor = document.getElementById('courseInstructor').value;
+    // Prevents the page to be refreshed after submitting
+    event.preventDefault()
 
-    // Create a new Course object
-    const course = new Course(name, type, level, modality, target, quantityOfClasses, groups, price, instructor);
-    console.log(course)
+    // Gets the values
+    const name = document.getElementById('courseName').value
+    const classes = document.getElementById('courseClasses').value
+    const price = document.getElementById('coursePrice').value
+    const instructor = document.getElementById('courseInstructor').value
 
-    // Add the Course object to the courses array
-    courses.push(course)
-    console.log(courses)
+    if (name !== '' && classes !== '' && price !== '' && instructor !== '') {
+        
+        // Creates a new course object
+        const course = new Course(name, classes, price, instructor)
 
-    // Clear the form
-    coursesCreator.reset()
+        // Pushes the new course to 'courses'
+        courses.push(course)
+
+        // Converts the 'courses' to string
+        let stringifiedCourses = JSON.stringify(courses)
+
+        // Sends stringified 'courses' to local storage
+        localStorage.setItem('courses', stringifiedCourses)
+
+        // Clears the form
+        coursesCreator.reset()
+
+        // Display success alert
+        fail.style.display = "none"
+        success.style.display = "flex"
+
+    } else {
+        // Display success alert
+        success.style.display = "none"    
+        fail.style.display = "flex"
+    }
 
     // Update the HTML table
-    updateTable();
-
-});
+    updateTable()
+    
+})
 
 // Function to update the HTML table
 function updateTable() {
-    // Get the table body element
-    const table = document.getElementById('courses');
 
-    // Clear the table
-    table.innerHTML = '';
+    // Gets the table body element
+    const table = document.getElementById('courses')
 
-    // Iterate over the courses array and add each Course object to the table
-    courses.forEach(function(course) {
-        const row = table.insertRow();
-        row.insertCell().textContent = course.id
-        row.insertCell().textContent = course.name
-        row.insertCell().textContent = course.type
-        row.insertCell().textContent = course.level
-        row.insertCell().textContent = course.modality
-        row.insertCell().textContent = course.ageGroupTarget
-        row.insertCell().textContent = course.quantityOfClasses
-        row.insertCell().textContent = course.groups
-        row.insertCell().textContent = registration.price
-        row.insertCell().textContent = course.fee
-        row.insertCell().textContent = course.instructor
-    })
+    // Clears the table
+    table.innerHTML = ''
+
+    // Gets information from local storage
+    let stringifiedCourses = localStorage.getItem('courses')
+    let parsedCourses = JSON.parse(stringifiedCourses)
+
+    if (parsedCourses !== null) {
+        for (let course of parsedCourses) {
+            const row = table.insertRow()
+            row.insertCell().textContent = course.id
+            row.insertCell().textContent = course.name
+            row.insertCell().textContent = course.classes
+            row.insertCell().textContent = registration.price
+            row.insertCell().textContent = course.fee
+            row.insertCell().textContent = course.instructor
+        } 
+    }
 }
-
-// let newCourse = new Course('beginners', 'grammar', 'a1', 'blended', 'adults', 16)
-// newCourse.addGroup(1, 'martes', '6:00PM')
-// newCourse.setfeePrice(8990)
-// newCourse.setInstructor('Hernán Agustín Campos')
-// newCourse.addStudent('agustincps@gmail.com')
-// newCourse.markAttendance('agustincps@gmail.com', '1 mar 2023')
-// newCourse.markAttendance('agustincps@gmail.com', '8 mar 2023')
-// newCourse.markAttendance('agustincps@gmail.com', '15 mar 2023')
-// newCourse.addPayment('agustincps@gmail.com', 'march', 8900)
-// newCourse.addPayment('agustincps@gmail.com', 'april', 8900)
-// newCourse.addPayment('agustincps@gmail.com', 'may', 8900)
-
-// console.log(newCourse)
-
-// let newStudent = new Student('Hernán', 'Campos', 'agustincps@gmail.com', 3876047616)
-// newStudent.enroll('beginners', 1)
-// newStudent.enroll('elementary', 4)
-// newStudent.payRegistration()
-// newStudent.payFee(8990)
-// console.log(newStudent)
-// newStudent.refund(8990)
-
-// newStudent.abandon('beginners')
-
-// newCourse.getIncome()
-
-

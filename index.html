@@ -41,40 +41,14 @@
             </header>
             <main>   
                 <section class="section_title">Cursos</section>
+                <div id="alertSuccess" class="alert success"><p>Curso creado con éxito.</p></div>
+                <div id="alertFail" class="alert fail"><p>Debe completar todos los campos.</p></div>
                 <!-- Form starts-->
                 <form class="form" id="courseCreator" action="">
                     <input id="courseName" name="courseName" type="text" placeholder="Asignar nombre">
-                    <select id="courseType" name="courseType">
-                        <option selected hidden>Tipo de curso</option>
-                        <option name="grammar">Gramática</option>
-                        <option name="conversation">Conversaciónn</option>
-                        <option name="other">Otro</option>
-                    </select>
-                    <select id="courseLevel" name="courselevel">
-                        <option selected hidden>Nivel</option>
-                        <option name="a1">A1</option>
-                        <option name="a2">A2</option>
-                        <option name="b1">B1</option>
-                    </select>
-                    <select id="courseModality" name="courseModality">
-                        <option selected hidden>Modalidad</option>
-                        <option name="face-to-face">Presencial (face to face)</option>
-                        <option name="online">Virtual (online)</option>
-                        <option name="blended">Mixto (blended)</option>
-                        <option name="hybrid">Híbrido (hybrid)</option>
-                        <option name="self-paced">Ritmo propio (self-paced)</option>
-                    </select>
-                    <select id="courseTarget" name="courseTarget">
-                        <option selected hidden>Grupo etario</option>
-                        <option name="kids">Niños (Kids)</option>
-                        <option name="teenargers">Adolescentes (teenagers)</option>
-                        <option name="adults">Adultos (adults)</option>
-                        <option name="third-age">Tercera edad (third-age)</option>
-                    </select>
-                    <input id="courseQuantityOfClasses" name="courseQuantityOfClasses" type="number" placeholder="Cantidad de clases">
-                    <input id="courseGroups" name="courseGroups" type="number" placeholder="Cantidad de comisiones">
+                    <input id="courseClasses" name="courseClasses" type="number" placeholder="Cantidad de clases">
                     <input id="coursePrice" name="coursePrice" type="number" placeholder="Asignar precio de cuota">
-                    <input  id="courseInstructor" name="courseInstructor" type="text" placeholder="Nombre del instructor">
+                    <input id="courseInstructor" name="courseInstructor" type="text" placeholder="Nombre del instructor">
                     <button id="createCourseButton" type="submit">Crear</button>
                 </form>
                 <!-- Form ends -->
@@ -84,12 +58,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Tipo</th>
-                                <th>Nivel</th>
-                                <th>Modalidad</th>
-                                <th>Target</th>
                                 <th>Clases</th>
-                                <th>Comisiones</th>
                                 <th>Inscripción</th>
                                 <th>Cuota</th>
                                 <th>Instructor</th>
