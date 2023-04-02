@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script defer src="./app.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <div class="wrapper">
@@ -41,16 +41,27 @@
             </header>
             <main>   
                 <section class="section_title">Cursos</section>
-                <div id="alertSuccess" class="alert success"><p>Curso creado con éxito.</p></div>
-                <div id="alertFail" class="alert fail"><p>Debe completar todos los campos.</p></div>
                 <!-- Form starts-->
-                <form class="form" id="courseCreator" action="">
-                    <input id="courseName" name="courseName" type="text" placeholder="Asignar nombre">
-                    <input id="courseClasses" name="courseClasses" type="number" placeholder="Cantidad de clases">
-                    <input id="coursePrice" name="coursePrice" type="number" placeholder="Asignar precio de cuota">
-                    <input id="courseInstructor" name="courseInstructor" type="text" placeholder="Nombre del instructor">
-                    <button id="createCourseButton" type="submit">Crear</button>
-                </form>
+                <div class="controllers">
+                    <form class="form" id="courseCreator" action="">
+                        <input id="courseName" name="courseName" type="text" placeholder="Asignar nombre">
+                        <input id="courseClasses" name="courseClasses" type="number" placeholder="Cantidad de clases">
+                        <input id="coursePrice" name="coursePrice" type="number" placeholder="Asignar precio de cuota">
+                        <input id="courseInstructor" name="courseInstructor" type="text" placeholder="Nombre del instructor">
+                        <button id="createCourseButton" type="submit">Crear</button>
+                    </form>
+                    <div class="weather">
+                        <p class="weather__city-name"></p>
+                        <p class="weather__country">El tiempo hoy</p>
+                        <p class="weather__temperature"></p>
+                        <u class="weather__description">Detalles del tiempo:
+                            <li class="feels-like"></li>
+                            <li class="humidity"></li>
+                            <li class="min"></li>
+                            <li class="max"></li>
+                        </u>
+                    </div>
+                </div>
                 <!-- Form ends -->
                 <div class="coursesTable-wrapper">
                     <table class="coursesTable">
@@ -62,6 +73,7 @@
                                 <th>Inscripción</th>
                                 <th>Cuota</th>
                                 <th>Instructor</th>
+                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="courses">
@@ -71,5 +83,7 @@
             </main>
         </div>
     </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script defer src="./app.js"></script>
 </body>
 </html>

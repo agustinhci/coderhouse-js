@@ -133,26 +133,9 @@ main {
     font-weight: 600;
 }
 
-.alert {
-    display: none;
-    margin-top: 20px;
-    height: 50px;
-    width: 100%;
-    border-radius: 5px;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.success {
-    color: #3cb800;
-    background-color: #e6ffd9;
-    border: 1px solid #3cb800;
-}
-
-.fail {
-    color: #ff6671;
-    background-color: #ffd9dc;
-    border: 1px solid #ff6671;
+.controllers {
+    display: flex;
+    flex-direction: row;
 }
 
 /* Form */
@@ -192,3 +175,53 @@ main {
     color: #000;
     background-color: #fff;
 }
+
+/* Weather */
+
+.weather {
+    width: 20%;
+    margin-left: 60px;
+    padding-left: 40px;
+    border-left: 1px solid #333333;
+}
+
+.weather__city-name {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.weather__country {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 12px;
+}
+
+.weather__temperature {
+    font-size: 50px;
+    font-weight: 300;
+    margin-top: 14px;
+    margin-bottom: 20px;
+}
+
+.weather__description {
+    color: #808080;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-decoration: none;
+    list-style: none;
+}
+
+.weather__description li:first-child {
+    margin-top: 10px;
+}
+
+.weather__description li::before {
+    content: "\2022";
+    color: #003bff;
+    font-weight: bold;
+    margin-right: 14px;
+
+  }
+

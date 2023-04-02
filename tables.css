@@ -57,3 +57,26 @@ tbody td {
     font-size: 14px;
     text-align: center;
 }
+
+/* Row action */
+
+.course__action {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.course__action-delete button {
+    padding: 10px 15px;
+    background-color: #0d0d0d;
+    border: 0;
+    color: #b2b2b2;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.course__action-delete:hover button {
+    color: #fff;
+    border: 0;
+    background-color: #003bff;
+}

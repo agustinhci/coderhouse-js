@@ -47,7 +47,7 @@ class Course {
     // The following properties are designed to be set later because the information may change before or during the course.
 
     // Set fee price
-    setfeePrice(fee) {
+    setFeePrice(fee) {
         this.fee = fee
     }
 
@@ -209,13 +209,29 @@ coursesCreator.addEventListener('submit', function(event) {
         coursesCreator.reset()
 
         // Display success alert
-        fail.style.display = "none"
-        success.style.display = "flex"
+        Toastify({
+            text: 'Curso creado exitósamente',
+            duration: 3000,
+            gravity: 'bottom',
+            style: {
+                color: "#b2b2b2",
+                background: "#0d0d0d",
+                border: "1px solid #b2b2b2"
+            }
+        }).showToast()
 
     } else {
         // Display success alert
-        success.style.display = "none"    
-        fail.style.display = "flex"
+        Toastify({
+            text: '¡Debe completar todos los campos!',
+            duration: 3000,
+            gravity: 'bottom',
+            style: {
+                color: "#000000",
+                background: "#ffcc00",
+                border: "1px solid #000000",
+            }
+        }).showToast()
     }
 
     // Update the HTML table
@@ -226,9 +242,7 @@ coursesCreator.addEventListener('submit', function(event) {
 // Function to update the HTML table
 function updateTable() {
 
-    // Gets the table body element
     const table = document.getElementById('courses')
-
     // Clears the table
     table.innerHTML = ''
 
@@ -242,9 +256,111 @@ function updateTable() {
             row.insertCell().textContent = course.id
             row.insertCell().textContent = course.name
             row.insertCell().textContent = course.classes
-            row.insertCell().textContent = registration.price
-            row.insertCell().textContent = course.fee
+            row.insertCell().textContent = `$${registration.price}`
+            row.insertCell().textContent = `$${course.fee}`
             row.insertCell().textContent = course.instructor
-        } 
+            row.insertCell().innerHTML = '<div class="course__action"><a class="course__action-delete"><button>Borrar</button></a></div>'
+        
+            let courseDelete_buttons = document.querySelectorAll('a.course__action-delete button')
+
+            courseDelete_buttons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    let btn = event.target // button
+                    let anchor = btn.parentElement // a
+                    let wrapper = anchor.parentElement // div
+                    let cell = wrapper.parentElement // cell
+                    let row = cell.parentElement // row
+        
+                    let courseId = row.cells[0].textContent // Gets the course ID to delete
+                    console.log(courseId)
+
+                    deleteCourse(courseId)
+                })
+            })
+
+            
+        }
     }
 }
+
+function deleteCourse(courseId) {  
+    // Use the for loop in order to access the index of the course and splice it
+    for (let i = 0; i < courses.length; i++) {
+        if (courses[i].id === courseId) {
+            let deletedCourseFromCourses = courses.splice(i, 1);
+            console.log(deletedCourseFromCourses[0].id + ' eliminado de Cursos');
+
+            Toastify({
+                text: 'Curso eliminado correctamente',
+                duration: 3000,
+                gravity: 'bottom',
+                style: {
+                    color: "#b2b2b2",
+                    background: "#0d0d0d",
+                    border: "1px solid #b2b2b2"
+                }
+            }).showToast()
+
+            break;
+        }
+    }
+
+    // Gets information from local storage
+    let stringifiedCourses = localStorage.getItem('courses')
+    let parsedCourses = JSON.parse(stringifiedCourses)
+    
+    for (let i = 0; i < parsedCourses.length; i++) {
+        if (parsedCourses[i].id === courseId) {
+            let deletedCourseFromStorage = parsedCourses.splice(i, 1);
+            console.log(deletedCourseFromStorage[0].id + ' eliminado de Storage');
+            break;
+        }
+    }
+
+    // Saves the updated course list to local storage
+    localStorage.setItem('courses', JSON.stringify(parsedCourses))
+
+    updateTable()
+}
+
+// WEATHER
+
+function showPosition(position) {
+
+    let lat = position.coords.latitude
+    let lon = position.coords.longitude
+    let api = 'bbf8893c6e8030e157bb633d11a66e17'
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api}`)
+        .then(response => response.json())
+        .then(data => {
+            const city = data.name
+            const temperature = data.main.temp
+            const feelsLike = data.main.feels_like
+            const min = data.main.temp_min
+            const max = data.main.temp_max
+            const humidity = data.main.humidity
+
+            let weatherCity = document.getElementsByClassName('weather__city-name')[0]
+            weatherCity.textContent = city
+
+            let weatherTemperature = document.getElementsByClassName('weather__temperature')[0]
+            weatherTemperature.textContent = `${temperature - 273,15}°`
+
+            let weatherFeelsLike = document.getElementsByClassName('feels-like')[0]
+            weatherFeelsLike.textContent = `Sensación: ${feelsLike - 273,15}°`
+
+            let weatherMin = document.getElementsByClassName('min')[0]
+            weatherMin.textContent = `Mínima: ${min - 273,15}°`
+
+            let weatherMax = document.getElementsByClassName('max')[0]
+            weatherMax.textContent = `Máxima: ${max - 273,15}°`
+
+            let weatherHumidity = document.getElementsByClassName('humidity')[0]
+            weatherHumidity.textContent = `Humedad: ${humidity}%`
+        })
+        .catch(error => console.error(error));
+
+}
+
+navigator.geolocation.getCurrentPosition(showPosition)
